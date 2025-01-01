@@ -8,6 +8,7 @@ phases:
   build:
     commands:
       - IMAGE_TAG=$(date +%Y%m%d%H%M%S)  # Generate a unique image tag
+      - echo "Generated IMAGE_TAG: $IMAGE_TAG"  # Debugging line
       - echo Building the Docker image...
       - docker build -t 010928179293.dkr.ecr.us-east-1.amazonaws.com/akash:$IMAGE_TAG .
       - echo Pushing the Docker image...
@@ -15,6 +16,7 @@ phases:
       - echo $IMAGE_TAG > imageTag.txt  # Save the image tag for later use
   post_build:
     commands:
+      - echo "Starting post-build phase..."
       - echo Updating ECS Task Definition...
       - sed -i "s/\${IMAGE_TAG}/$IMAGE_TAG/g" ecs-task-def.json  # Replace the placeholder with the actual image tag
       - sed -i 's/\r//' ecs-task-def.json  # Remove any carriage return characters (Windows line endings)
@@ -23,7 +25,7 @@ phases:
       - echo Registering the new ECS Task Definition...
       - REGISTERED_TASK_DEF=$(aws ecs register-task-definition --cli-input-json file://ecs-task-def.json)
       - TASK_DEF_REVISION=$(echo $REGISTERED_TASK_DEF | jq -r '.taskDefinition.revision')  # Capture the revision number
-      - echo New Task Definition Revision: $TASK_DEF_REVISION
+      - echo "New Task Definition Revision: $TASK_DEF_REVISION"
       - echo Deploying the updated task definition to ECS...
       - aws ecs update-service --cluster democluster --service demo-service --task-definition demo-container-task:$TASK_DEF_REVISION --force-new-deployment  # Specify the task definition with revision
 
