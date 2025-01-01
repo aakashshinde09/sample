@@ -23,7 +23,7 @@ phases:
       - echo "Registering the new ECS Task Definition..."
       - REGISTERED_TASK_DEF=$(aws ecs register-task-definition --cli-input-json file://ecs-task-def.json)
       - TASK_DEF_REVISION=$(echo $REGISTERED_TASK_DEF | jq -r '.taskDefinition.revision')  # Capture the revision number
-      - echo "New Task Definition Revision: $TASK_DEF_REVISION"
+      - "echo \"New Task Definition Revision: $TASK_DEF_REVISION\""
       - echo "Deploying the updated task definition to ECS..."
       - aws ecs update-service --cluster democluster --service demo-service --task-definition demo-container-task:$TASK_DEF_REVISION --force-new-deployment  # Specify the task definition with revision
 
