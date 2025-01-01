@@ -21,9 +21,11 @@ phases:
       - sed -i 's/[[:space:]]*$//' ecs-task-def.json  # Remove any trailing spaces
       - jq . ecs-task-def.json  # Validate the file with jq
       - echo Registering the new ECS Task Definition...
-      - aws ecs register-task-definition --cli-input-json file://ecs-task-def.json
+      - REGISTERED_TASK_DEF=$(aws ecs register-task-definition --cli-input-json file://ecs-task-def.json)
+      - TASK_DEF_REVISION=$(echo $REGISTERED_TASK_DEF | jq -r '.taskDefinition.revision')  # Capture the revision number
+      - echo New Task Definition Revision: $TASK_DEF_REVISION
       - echo Deploying the updated task definition to ECS...
-      - aws ecs update-service --cluster democluster --service demo-service --force-new-deployment  # Replace demo-service with your ECS service name
+      - aws ecs update-service --cluster democluster --service demo-service --task-definition demo-container-task:$TASK_DEF_REVISION --force-new-deployment  # Specify the task definition with revision
 
 artifacts:
   files:
