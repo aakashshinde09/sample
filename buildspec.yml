@@ -25,4 +25,6 @@ phases:
 
 artifacts:
   files:
-    - imageTag.txt
+    - '**/*'
+    - ecs-task-def.json   # Make sure this file is included in the artifacts
+  discard-paths: yes
