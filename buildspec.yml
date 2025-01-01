@@ -7,7 +7,7 @@ phases:
       - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 010928179293.dkr.ecr.us-east-1.amazonaws.com
   build:
     commands:
-      - export IMAGE_TAG=$(date +%Y%m%d%H%M%S)  # Generate a unique image tag
+      - IMAGE_TAG=$(date +%Y%m%d%H%M%S)  # Generate a unique image tag
       - echo "Generated IMAGE_TAG: $IMAGE_TAG"  # Debugging line
       - echo Building the Docker image...
       - docker build -t 010928179293.dkr.ecr.us-east-1.amazonaws.com/akash:$IMAGE_TAG .
