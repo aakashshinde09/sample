@@ -16,10 +16,10 @@ phases:
   post_build:
     commands:
       - echo Updating ECS Task Definition...
-      - |
-        sed -i "s/\${IMAGE_TAG}/$IMAGE_TAG/g" ecs-task-def.json  # Replace the placeholder with the actual image tag
-      - cat -A ecs-task-def.json
-      - jq . ecs-task-def.json
+      - sed -i "s/\${IMAGE_TAG}/$IMAGE_TAG/g" ecs-task-def.json  # Replace the placeholder with the actual image tag
+      - sed -i 's/\r//' ecs-task-def.json  # Remove any carriage return characters (Windows line endings)
+      - sed -i 's/[[:space:]]*$//' ecs-task-def.json  # Remove any trailing spaces
+      - jq . ecs-task-def.json  # Validate the file with jq
       - echo Registering the new ECS Task Definition...
       - aws ecs register-task-definition --cli-input-json file://ecs-task-def.json
       - echo Deploying the updated task definition to ECS...
